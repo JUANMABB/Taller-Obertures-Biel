@@ -72,6 +72,22 @@ h1 small { display: block; font-size: 15px; font-weight: 500; color: var(--muted
 .op .nm { font-weight: 700; line-height: 1.25; }
 .op .sb { font-size: 13px; color: var(--muted); }
 .op .st { font-size: 13px; color: var(--muted); }
+.rack .switch { width: 100%; }
+.rack .switch button { flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 8px 6px; }
+.rack .switch .dot { width: 12px; height: 12px; }
+.crumbs { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; font-size: 14px; }
+.crumbs button { -webkit-appearance: none; appearance: none; border: 0; background: var(--bg); color: var(--accent); font: 700 13px var(--mono); padding: 4px 8px; border-radius: 8px; cursor: pointer; }
+.crumbs button[aria-current="true"] { background: var(--accent); color: var(--panel); }
+.crumbs .sep { color: var(--muted); }
+.tboard { display: flex; justify-content: center; }
+.board.mini { max-width: 230px; border-width: 5px; border-radius: 6px; pointer-events: none; }
+.board.mini .coord { display: none; }
+.tq { font-size: 14px; font-weight: 700; color: var(--muted); }
+.op .mvl { font-family: var(--mono); font-weight: 800; font-size: 16px; color: var(--accent); display: flex; justify-content: space-between; gap: 8px; }
+.op .mvl i { font-style: normal; color: var(--muted); font-family: var(--font); }
+.op.leaf { border-style: solid; background: var(--panel); }
+.op.leaf .mvl { color: var(--good); }
+.op.leaf.done { background: var(--good-soft); }
 .stars { color: var(--star); letter-spacing: 1px; white-space: nowrap; }
 .stars .off { color: var(--star-off); }
 .stage { background: var(--panel); border: 1px solid var(--line); border-radius: 18px; padding: 16px; display: grid; gap: 12px; min-width: 0; }
@@ -1926,9 +1942,14 @@ if (typeof define !== 'undefined')
   </nav>
 
   <div class="grid" id="viewPlay">
-    <nav class="rack" aria-label="Obertures">
-      <div><h2><span class="dot w"></span>Amb blanques</h2><div class="olist" id="listW"></div></div>
-      <div><h2><span class="dot b"></span>Amb negres</h2><div class="olist" id="listB"></div></div>
+    <nav class="rack" aria-label="Tria l'obertura">
+      <div class="switch tcol" id="tCol" aria-label="Color">
+        <button type="button" data-c="w" aria-pressed="true"><span class="dot w"></span>Blanques</button><button type="button" data-c="b" aria-pressed="false"><span class="dot b"></span>Negres</button>
+      </div>
+      <div class="crumbs" id="tCrumbs" aria-label="Camí"></div>
+      <div class="tboard"><div class="board mini" id="tBoard" aria-hidden="true"></div></div>
+      <div class="tq" id="tQ"></div>
+      <div class="olist" id="tKids"></div>
     </nav>
 
     <main class="stage">
@@ -1991,7 +2012,7 @@ if (typeof define !== 'undefined')
     </div>
   </div>
 
-  <footer>El progrés es guarda només en aquest aparell. Versió 2026-10-15e. Peces cburnett (CC BY-SA 3.0).</footer>
+  <footer>El progrés es guarda només en aquest aparell. Versió 2026-10-15. Peces cburnett (CC BY-SA 3.0).</footer>
 </div>
 
 <script>
@@ -2874,6 +2895,211 @@ var DATA = {
       "g": ["Obertura dels Quatre Cavalls", "amb 4.d4"]
     }]
   }, {
+    "id": "sicn",
+    "color": "b",
+    "name": "Defensa Siciliana (amb negres)",
+    "sub": "1.e4 c5 · Drac Accelerat",
+    "desc": "Contra 1.e4 respons amb 1...c5. Canvies el peó de c pel peó central blanc, treus l'alfil a g7 (el «drac») i contraataques pel flanc de dama. Aquí aprens què fer contra les respostes principals de les blanques.",
+    "lines": [{
+      "name": "Obert amb 5.Cc3",
+      "uci": ["e2e4", "c7c5", "g1f3", "b8c6", "d2d4", "c5d4", "f3d4", "g7g6", "b1c3", "f8g7", "c1e3", "g8f6", "f1c4", "e8g8", "c4b3", "d7d6", "f2f3", "c8d7", "d1d2", "c6d4", "e3d4", "b7b5"],
+      "plan": {
+        "me": [{
+          "t": "...a5 i ...a4 per empaitar l'alfil de b3. Aquest alfil apunta a f7 i al teu rei: si el fas fora, el teu rei respira.",
+          "sq": ["b3", "g8"],
+          "ar": ["a7a5", "a5a4", "b3g8"],
+          "c": [1, 1, 0]
+        }, {
+          "t": "...b4 per fer fora el cavall de c3. Sense aquest cavall, el peó d'e4 queda sense defensa i el teu cavall de f6 se'l pot menjar.",
+          "sq": ["c3", "e4"],
+          "ar": ["b5b4", "f6e4"],
+          "c": [1, 1]
+        }, {
+          "t": "Les torres a b8 i c8: les columnes b i c són les que obres per atacar el rei blanc quan enroqui llarg.",
+          "sq": ["a8", "f8"],
+          "ar": ["a8b8", "f8c8"],
+          "c": [1, 1]
+        }],
+        "them": [{
+          "t": "Les blanques volen enrocar llarg i avançar els peons h i g per obrir columnes contra el teu rei. És una cursa: qui ataca primer, guanya.",
+          "sq": ["g8"],
+          "ar": ["e1c1", "h2h4", "g2g4"],
+          "c": [0, 0, 0]
+        }, {
+          "t": "L'alfil de d4 es vol canviar pel teu alfil de g7. Sense aquest alfil, les caselles del voltant del teu rei queden sense defensa.",
+          "sq": ["g7", "d4"],
+          "ar": ["d4g7"],
+          "c": [0]
+        }]
+      },
+      "g": ["Defensa Siciliana", "Drac Accelerat amb 5.Cc3"]
+    }, {
+      "name": "Maróczy amb 5.c4",
+      "uci": ["e2e4", "c7c5", "g1f3", "b8c6", "d2d4", "c5d4", "f3d4", "g7g6", "c2c4", "g8f6", "b1c3", "d7d6", "f1e2", "c6d4", "d1d4", "f8g7", "c1e3", "e8g8", "d4d2", "c8e6"],
+      "plan": {
+        "me": [{
+          "t": "...Da5 i ...Tfc8: la dama i la torre pressionen el peó de c4 i el cavall de c3.",
+          "sq": ["c4", "c3"],
+          "ar": ["d8a5", "f8c8"],
+          "c": [1, 1]
+        }, {
+          "t": "...a6 i ...b5: si aconsegueixes avançar el peó a b5, trenques el lligam de peons blancs i les teves peces guanyen espai.",
+          "sq": ["c4"],
+          "ar": ["a7a6", "b7b5"],
+          "c": [1, 1]
+        }, {
+          "t": "...Cd7 destapa l'alfil de g7, que apuntarà fins a b2. Després el cavall pot saltar a c5 o e5.",
+          "sq": ["g7", "b2"],
+          "ar": ["f6d7", "g7b2"],
+          "c": [1, 1]
+        }],
+        "them": [{
+          "t": "Les blanques volen enrocar i portar les torres a c1 i d1 per controlar el centre.",
+          "sq": ["e1"],
+          "ar": ["e1g1", "a1c1"],
+          "c": [0, 0]
+        }, {
+          "t": "També poden avançar f4 i f5 per atacar el teu rei amb els peons.",
+          "sq": ["f2"],
+          "ar": ["f2f4", "f4f5"],
+          "c": [0, 0]
+        }]
+      },
+      "g": ["Defensa Siciliana", "Drac Accelerat amb el lligam de Maróczy"]
+    }, {
+      "name": "Rossolimo 3.Ab5",
+      "uci": ["e2e4", "c7c5", "g1f3", "b8c6", "f1b5", "g7g6", "e1g1", "f8g7", "f1e1", "g8f6", "c2c3", "e8g8", "d2d4", "c5d4", "c3d4", "d7d5", "e4e5", "f6e4"],
+      "plan": {
+        "me": [{
+          "t": "...Ag4 clava el cavall de f3, que és qui defensa el peó de d4.",
+          "sq": ["f3", "d4"],
+          "ar": ["c8g4"],
+          "c": [1]
+        }, {
+          "t": "...Db6 pressiona el peó de d4. Amb la dama, el cavall de c6 i l'alfil de g4, el peó pot acabar caient.",
+          "sq": ["d4"],
+          "ar": ["d8b6"],
+          "c": [1]
+        }, {
+          "t": "...f6 per atacar el peó d'e5 i obrir la columna f per a la teva torre.",
+          "sq": ["e5"],
+          "ar": ["f7f6"],
+          "c": [1]
+        }],
+        "them": [{
+          "t": "Les blanques volen Cbd2 per canviar el teu cavall d'e4, que és molt fort.",
+          "sq": ["e4"],
+          "ar": ["b1d2"],
+          "c": [0]
+        }, {
+          "t": "L'alfil de b5 pot capturar el teu cavall de c6. Així el peó de d4 queda més tranquil.",
+          "sq": ["c6"],
+          "ar": ["b5c6"],
+          "c": [0]
+        }]
+      },
+      "g": ["Defensa Siciliana", "variant Rossolimo"]
+    }, {
+      "name": "Alapin 2.c3",
+      "uci": ["e2e4", "c7c5", "c2c3", "g8f6", "e4e5", "f6d5", "d2d4", "c5d4", "g1f3", "b8c6", "c3d4", "d7d6", "f1c4", "d5b6", "c4b5", "d6e5", "f3e5", "c8d7", "e5d7", "d8d7"],
+      "plan": {
+        "me": [{
+          "t": "El peó blanc de d4 està sol: cap altre peó el pot defensar. Ataca'l amb el cavall de c6, la dama i, més endavant, la torre a d8.",
+          "sq": ["d4"],
+          "ar": ["c6d4", "d7d4", "a8d8"],
+          "c": [1, 1, 1]
+        }, {
+          "t": "...e6 i ...Ae7 per treure l'alfil i enrocar curt.",
+          "sq": ["e8"],
+          "ar": ["e7e6", "f8e7", "e8g8"],
+          "c": [1, 1, 1]
+        }, {
+          "t": "El cavall de b6 vol anar a d5. Davant d'un peó aïllat, la casella del davant és la millor per a un cavall: ningú no el pot fer fora amb un peó.",
+          "sq": ["d5"],
+          "ar": ["b6d5"],
+          "c": [1]
+        }],
+        "them": [{
+          "t": "Les blanques volen capturar a c6 amb l'alfil i enrocar.",
+          "sq": ["c6"],
+          "ar": ["b5c6", "e1g1"],
+          "c": [0, 0]
+        }, {
+          "t": "Volen Cc3 i Ae3 per defensar el peó de d4.",
+          "sq": ["d4"],
+          "ar": ["b1c3", "c1e3"],
+          "c": [0, 0]
+        }]
+      },
+      "g": ["Defensa Siciliana", "variant Alapin"]
+    }, {
+      "name": "Tancada 2.Cc3",
+      "uci": ["e2e4", "c7c5", "b1c3", "b8c6", "f2f4", "g7g6", "g1f3", "f8g7", "f1c4", "e7e6", "e1g1", "g8e7", "d2d3", "e8g8"],
+      "plan": {
+        "me": [{
+          "t": "...d5: obres el centre i ataques l'alfil de c4. Amb el centre obert, les teves peces arriben més ràpid a tot arreu.",
+          "sq": ["d5", "c4"],
+          "ar": ["d7d5"],
+          "c": [1]
+        }, {
+          "t": "...Ca5 per canviar l'alfil de c4, que apunta cap al teu rei.",
+          "sq": ["c4"],
+          "ar": ["c6a5"],
+          "c": [1]
+        }, {
+          "t": "...Tb8 i ...b5 per guanyar espai al flanc de dama.",
+          "sq": ["b7"],
+          "ar": ["a8b8", "b7b5"],
+          "c": [1, 1]
+        }],
+        "them": [{
+          "t": "Les blanques volen avançar f5 per obrir la columna f i atacar el teu rei.",
+          "sq": ["f4"],
+          "ar": ["f4f5"],
+          "c": [0]
+        }, {
+          "t": "La dama blanca pot anar a e1 i després a h4, ben a prop del teu rei.",
+          "sq": ["g8"],
+          "ar": ["d1e1", "e1h4"],
+          "c": [0, 0]
+        }]
+      },
+      "g": ["Defensa Siciliana", "Siciliana Tancada"]
+    }, {
+      "name": "Gambit Smith-Morra",
+      "uci": ["e2e4", "c7c5", "d2d4", "c5d4", "c2c3", "d4c3", "b1c3", "b8c6", "g1f3", "d7d6", "f1c4", "e7e6", "e1g1", "g8f6", "d1e2", "f8e7", "f1d1", "e6e5", "h2h3", "e8g8"],
+      "plan": {
+        "me": [{
+          "t": "...Ae6 per canviar l'alfil de c4, la peça blanca més perillosa: és la que apunta a f7.",
+          "sq": ["c4", "f7"],
+          "ar": ["c8e6"],
+          "c": [1]
+        }, {
+          "t": "...Tc8 i ...a6: la torre a la columna c oberta i el peó a a6 perquè el cavall blanc no pugui saltar a b5.",
+          "sq": ["c8", "b5"],
+          "ar": ["a8c8", "a7a6"],
+          "c": [1, 1]
+        }, {
+          "t": "Tens un peó de més. Canviar peces t'afavoreix: com menys peces quedin, més es notarà el peó de més.",
+          "sq": ["d6"],
+          "ar": [],
+          "c": []
+        }],
+        "them": [{
+          "t": "Les blanques volen Cd5 i Ag5 per atacar el teu cavall de f6 i obrir el centre.",
+          "sq": ["d5"],
+          "ar": ["c3d5", "c1g5"],
+          "c": [0, 0]
+        }, {
+          "t": "La torre de d1 ataca el teu peó de d6: vigila'l sempre.",
+          "sq": ["d6"],
+          "ar": ["d1d6"],
+          "c": [0]
+        }]
+      },
+      "g": ["Defensa Siciliana", "gambit Smith-Morra acceptat"]
+    }]
+  }, {
     "id": "pas",
     "color": "b",
     "name": "Com evitar el mat del pastor",
@@ -3486,7 +3712,102 @@ var DATA = {
     "b|e2e4 e7e5 g1f3 b8c6 b1c3 g8f6 d2d4 e5d4 f3d4 f8b4 d4c6 b7c6 f1d3 d7d5 e4d5 c6d5 e1g1": "Les blanques enroquen.",
     "b|e2e4 e7e5 g1f3 b8c6 b1c3 g8f6 d2d4 e5d4 f3d4 f8b4 d4c6 b7c6 f1d3 d7d5 e4d5 c6d5 e1g1 e8g8": "Enroques tu també.",
     "b|e2e4 e7e5 g1f3 b8c6 b1c3 g8f6 d2d4 e5d4 f3d4 f8b4 d4c6 b7c6 f1d3 d7d5 e4d5 c6d5 e1g1 e8g8 c1g5": "L'alfil blanc clava el teu cavall.",
-    "b|e2e4 e7e5 g1f3 b8c6 b1c3 g8f6 d2d4 e5d4 f3d4 f8b4 d4c6 b7c6 f1d3 d7d5 e4d5 c6d5 e1g1 e8g8 c1g5 c7c6": "Reforces el peó de d5. La posició està igualada."
+    "b|e2e4 e7e5 g1f3 b8c6 b1c3 g8f6 d2d4 e5d4 f3d4 f8b4 d4c6 b7c6 f1d3 d7d5 e4d5 c6d5 e1g1 e8g8 c1g5 c7c6": "Reforces el peó de d5. La posició està igualada.",
+    "b|e2e4 c7c5": "Respons amb la Defensa Siciliana. El peó de c també vigila la casella d4, però des del costat. La partida queda desequilibrada i plena d'oportunitats per a tots dos.",
+    "b|e2e4 c7c5 g1f3": "Les blanques treuen el cavall i preparen d4.",
+    "b|e2e4 c7c5 g1f3 b8c6": "Treus el cavall, que també vigila les caselles d4 i e5.",
+    "b|e2e4 c7c5 g1f3 b8c6 d2d4": "Les blanques obren el centre.",
+    "b|e2e4 c7c5 g1f3 b8c6 d2d4 c5d4": "Captures. Canvies un peó del costat (el de c) per un peó central blanc: aquesta és la gran idea de la Siciliana!",
+    "b|e2e4 c7c5 g1f3 b8c6 d2d4 c5d4 f3d4": "Les blanques recuperen el peó amb el cavall, que queda al centre.",
+    "b|e2e4 c7c5 g1f3 b8c6 d2d4 c5d4 f3d4 g7g6": "Prepares l'alfil a g7, a la diagonal llarga. És el Drac Accelerat: el peó de g6 i l'alfil de g7 recorden un drac traient foc.",
+    "b|e2e4 c7c5 g1f3 b8c6 d2d4 c5d4 f3d4 g7g6 b1c3": "Les blanques treuen l'altre cavall.",
+    "b|e2e4 c7c5 g1f3 b8c6 d2d4 c5d4 f3d4 g7g6 b1c3 f8g7": "L'alfil ja és a la diagonal llarga. Pressiona el cavall de d4 i, més enllà, el flanc de dama blanc.",
+    "b|e2e4 c7c5 g1f3 b8c6 d2d4 c5d4 f3d4 g7g6 b1c3 f8g7 c1e3": "Les blanques defensen el cavall de d4 amb l'alfil.",
+    "b|e2e4 c7c5 g1f3 b8c6 d2d4 c5d4 f3d4 g7g6 b1c3 f8g7 c1e3 g8f6": "Treus el cavall i prepares l'enroc.",
+    "b|e2e4 c7c5 g1f3 b8c6 d2d4 c5d4 f3d4 g7g6 b1c3 f8g7 c1e3 g8f6 f1c4": "L'alfil blanc apunta a f7, al costat del teu rei.",
+    "b|e2e4 c7c5 g1f3 b8c6 d2d4 c5d4 f3d4 g7g6 b1c3 f8g7 c1e3 g8f6 f1c4 e8g8": "Enroques. El rei queda protegit darrere l'alfil de g7.",
+    "b|e2e4 c7c5 g1f3 b8c6 d2d4 c5d4 f3d4 g7g6 b1c3 f8g7 c1e3 g8f6 f1c4 e8g8 c4b3": "Les blanques retiren l'alfil a b3. Així eviten un truc: ...Cxe4 i després ...d5, que atacaria l'alfil i el cavall alhora.",
+    "b|e2e4 c7c5 g1f3 b8c6 d2d4 c5d4 f3d4 g7g6 b1c3 f8g7 c1e3 g8f6 f1c4 e8g8 c4b3 d7d6": "Defenses e5 i obres camí a l'alfil de c8.",
+    "b|e2e4 c7c5 g1f3 b8c6 d2d4 c5d4 f3d4 g7g6 b1c3 f8g7 c1e3 g8f6 f1c4 e8g8 c4b3 d7d6 f2f3": "Les blanques reforcen e4. Volen jugar Dd2, enrocar llarg i atacar el teu rei avançant els peons.",
+    "b|e2e4 c7c5 g1f3 b8c6 d2d4 c5d4 f3d4 g7g6 b1c3 f8g7 c1e3 g8f6 f1c4 e8g8 c4b3 d7d6 f2f3 c8d7": "Treus l'últim alfil i connectes les peces.",
+    "b|e2e4 c7c5 g1f3 b8c6 d2d4 c5d4 f3d4 g7g6 b1c3 f8g7 c1e3 g8f6 f1c4 e8g8 c4b3 d7d6 f2f3 c8d7 d1d2": "La dama blanca surt. Ara les blanques volen enrocar llarg i avançar els peons h i g.",
+    "b|e2e4 c7c5 g1f3 b8c6 d2d4 c5d4 f3d4 g7g6 b1c3 f8g7 c1e3 g8f6 f1c4 e8g8 c4b3 d7d6 f2f3 c8d7 d1d2 c6d4": "Canvies cavalls. Cada peça que canvies és una peça menys que pot atacar el teu rei.",
+    "b|e2e4 c7c5 g1f3 b8c6 d2d4 c5d4 f3d4 g7g6 b1c3 f8g7 c1e3 g8f6 f1c4 e8g8 c4b3 d7d6 f2f3 c8d7 d1d2 c6d4 e3d4": "Les blanques recuperen amb l'alfil.",
+    "b|e2e4 c7c5 g1f3 b8c6 d2d4 c5d4 f3d4 g7g6 b1c3 f8g7 c1e3 g8f6 f1c4 e8g8 c4b3 d7d6 f2f3 c8d7 d1d2 c6d4 e3d4 b7b5": "Contraataques al flanc de dama! Vols jugar ...a5 i ...a4 per empaitar l'alfil de b3, i ...b4 per fer fora el cavall de c3, que defensa e4. A la Siciliana, qui ataca més ràpid sol guanyar.",
+    "b|e2e4 c7c5 g1f3 b8c6 d2d4 c5d4 f3d4 g7g6 c2c4": "Les blanques posen peons a c4 i e4. És el «lligam de Maróczy»: aquests dos peons vigilen la casella d5 i et treuen espai.",
+    "b|e2e4 c7c5 g1f3 b8c6 d2d4 c5d4 f3d4 g7g6 c2c4 g8f6": "Treus el cavall i ataques el peó d'e4.",
+    "b|e2e4 c7c5 g1f3 b8c6 d2d4 c5d4 f3d4 g7g6 c2c4 g8f6 b1c3": "Les blanques defensen e4 amb el cavall.",
+    "b|e2e4 c7c5 g1f3 b8c6 d2d4 c5d4 f3d4 g7g6 c2c4 g8f6 b1c3 d7d6": "Obres camí a l'alfil de c8 i vigiles la casella e5.",
+    "b|e2e4 c7c5 g1f3 b8c6 d2d4 c5d4 f3d4 g7g6 c2c4 g8f6 b1c3 d7d6 f1e2": "L'alfil blanc surt i prepara l'enroc.",
+    "b|e2e4 c7c5 g1f3 b8c6 d2d4 c5d4 f3d4 g7g6 c2c4 g8f6 b1c3 d7d6 f1e2 c6d4": "Canvies cavalls. Quan tens menys espai, canviar peces t'ajuda: les que queden es mouen més còmodes.",
+    "b|e2e4 c7c5 g1f3 b8c6 d2d4 c5d4 f3d4 g7g6 c2c4 g8f6 b1c3 d7d6 f1e2 c6d4 d1d4": "La dama blanca recupera i queda al centre.",
+    "b|e2e4 c7c5 g1f3 b8c6 d2d4 c5d4 f3d4 g7g6 c2c4 g8f6 b1c3 d7d6 f1e2 c6d4 d1d4 f8g7": "L'alfil va a la diagonal llarga. Quan el cavall de f6 es mogui, l'alfil apuntarà directament a la dama de d4.",
+    "b|e2e4 c7c5 g1f3 b8c6 d2d4 c5d4 f3d4 g7g6 c2c4 g8f6 b1c3 d7d6 f1e2 c6d4 d1d4 f8g7 c1e3": "Les blanques treuen l'alfil i defensen la dama.",
+    "b|e2e4 c7c5 g1f3 b8c6 d2d4 c5d4 f3d4 g7g6 c2c4 g8f6 b1c3 d7d6 f1e2 c6d4 d1d4 f8g7 c1e3 e8g8": "Enroques. El rei queda segur.",
+    "b|e2e4 c7c5 g1f3 b8c6 d2d4 c5d4 f3d4 g7g6 c2c4 g8f6 b1c3 d7d6 f1e2 c6d4 d1d4 f8g7 c1e3 e8g8 d4d2": "La dama blanca s'aparta de la diagonal del teu alfil de g7.",
+    "b|e2e4 c7c5 g1f3 b8c6 d2d4 c5d4 f3d4 g7g6 c2c4 g8f6 b1c3 d7d6 f1e2 c6d4 d1d4 f8g7 c1e3 e8g8 d4d2 c8e6": "L'alfil va a e6, on ataca el peó de c4. Prepares ...Da5 i ...Tfc8 per pressionar el flanc de dama.",
+    "b|e2e4 c7c5 g1f3 b8c6 f1b5": "L'alfil blanc ataca el teu cavall, que vigila d4 i e5. És la variant Rossolimo.",
+    "b|e2e4 c7c5 g1f3 b8c6 f1b5 g7g6": "Prepares l'alfil a g7. Si les blanques capturen a c6, recuperes amb un peó i et quedes amb la parella d'alfils.",
+    "b|e2e4 c7c5 g1f3 b8c6 f1b5 g7g6 e1g1": "Les blanques enroquen.",
+    "b|e2e4 c7c5 g1f3 b8c6 f1b5 g7g6 e1g1 f8g7": "L'alfil va a la diagonal llarga.",
+    "b|e2e4 c7c5 g1f3 b8c6 f1b5 g7g6 e1g1 f8g7 f1e1": "La torre blanca defensa e4 i prepara l'avanç e5.",
+    "b|e2e4 c7c5 g1f3 b8c6 f1b5 g7g6 e1g1 f8g7 f1e1 g8f6": "Treus el cavall i ataques e4.",
+    "b|e2e4 c7c5 g1f3 b8c6 f1b5 g7g6 e1g1 f8g7 f1e1 g8f6 c2c3": "Les blanques preparen d4.",
+    "b|e2e4 c7c5 g1f3 b8c6 f1b5 g7g6 e1g1 f8g7 f1e1 g8f6 c2c3 e8g8": "Enroques. El rei està segur.",
+    "b|e2e4 c7c5 g1f3 b8c6 f1b5 g7g6 e1g1 f8g7 f1e1 g8f6 c2c3 e8g8 d2d4": "Les blanques avancen al centre.",
+    "b|e2e4 c7c5 g1f3 b8c6 f1b5 g7g6 e1g1 f8g7 f1e1 g8f6 c2c3 e8g8 d2d4 c5d4": "Captures.",
+    "b|e2e4 c7c5 g1f3 b8c6 f1b5 g7g6 e1g1 f8g7 f1e1 g8f6 c2c3 e8g8 d2d4 c5d4 c3d4": "Les blanques recuperen. Ara tenen dos peons al centre.",
+    "b|e2e4 c7c5 g1f3 b8c6 f1b5 g7g6 e1g1 f8g7 f1e1 g8f6 c2c3 e8g8 d2d4 c5d4 c3d4 d7d5": "Ataques el centre de seguida! Si les blanques capturen a d5, el teu cavall recupera i queda molt actiu.",
+    "b|e2e4 c7c5 g1f3 b8c6 f1b5 g7g6 e1g1 f8g7 f1e1 g8f6 c2c3 e8g8 d2d4 c5d4 c3d4 d7d5 e4e5": "Les blanques avancen i ataquen el teu cavall de f6.",
+    "b|e2e4 c7c5 g1f3 b8c6 f1b5 g7g6 e1g1 f8g7 f1e1 g8f6 c2c3 e8g8 d2d4 c5d4 c3d4 d7d5 e4e5 f6e4": "El cavall salta a e4, una casella central molt forta. És difícil fer-lo fora i des d'allà ataca moltes caselles.",
+    "b|e2e4 c7c5 c2c3": "Les blanques preparen d4 per tenir dos peons al centre. És la variant Alapin.",
+    "b|e2e4 c7c5 c2c3 g8f6": "Ataques el peó d'e4 de seguida, abans que les blanques puguin jugar d4.",
+    "b|e2e4 c7c5 c2c3 g8f6 e4e5": "El peó blanc avança i fa fora el teu cavall.",
+    "b|e2e4 c7c5 c2c3 g8f6 e4e5 f6d5": "El cavall va a d5, una casella central on està molt ben col·locat.",
+    "b|e2e4 c7c5 c2c3 g8f6 e4e5 f6d5 d2d4": "Les blanques ocupen el centre.",
+    "b|e2e4 c7c5 c2c3 g8f6 e4e5 f6d5 d2d4 c5d4": "Captures a d4.",
+    "b|e2e4 c7c5 c2c3 g8f6 e4e5 f6d5 d2d4 c5d4 g1f3": "Les blanques treuen el cavall abans de recuperar el peó.",
+    "b|e2e4 c7c5 c2c3 g8f6 e4e5 f6d5 d2d4 c5d4 g1f3 b8c6": "Treus el cavall i ataques els peons de d4 i e5.",
+    "b|e2e4 c7c5 c2c3 g8f6 e4e5 f6d5 d2d4 c5d4 g1f3 b8c6 c3d4": "Les blanques recuperen.",
+    "b|e2e4 c7c5 c2c3 g8f6 e4e5 f6d5 d2d4 c5d4 g1f3 b8c6 c3d4 d7d6": "Ataques el peó d'e5, que és el peó blanc més avançat.",
+    "b|e2e4 c7c5 c2c3 g8f6 e4e5 f6d5 d2d4 c5d4 g1f3 b8c6 c3d4 d7d6 f1c4": "L'alfil blanc ataca el teu cavall de d5.",
+    "b|e2e4 c7c5 c2c3 g8f6 e4e5 f6d5 d2d4 c5d4 g1f3 b8c6 c3d4 d7d6 f1c4 d5b6": "El cavall s'aparta i, de passada, ataca l'alfil.",
+    "b|e2e4 c7c5 c2c3 g8f6 e4e5 f6d5 d2d4 c5d4 g1f3 b8c6 c3d4 d7d6 f1c4 d5b6 c4b5": "L'alfil es retira a b5 i clava el teu cavall de c6.",
+    "b|e2e4 c7c5 c2c3 g8f6 e4e5 f6d5 d2d4 c5d4 g1f3 b8c6 c3d4 d7d6 f1c4 d5b6 c4b5 d6e5": "Captures a e5.",
+    "b|e2e4 c7c5 c2c3 g8f6 e4e5 f6d5 d2d4 c5d4 g1f3 b8c6 c3d4 d7d6 f1c4 d5b6 c4b5 d6e5 f3e5": "Les blanques recuperen amb el cavall, que ataca el teu cavall de c6.",
+    "b|e2e4 c7c5 c2c3 g8f6 e4e5 f6d5 d2d4 c5d4 g1f3 b8c6 c3d4 d7d6 f1c4 d5b6 c4b5 d6e5 f3e5 c8d7": "Treus l'alfil per defensar el cavall de c6 i trencar la clavada.",
+    "b|e2e4 c7c5 c2c3 g8f6 e4e5 f6d5 d2d4 c5d4 g1f3 b8c6 c3d4 d7d6 f1c4 d5b6 c4b5 d6e5 f3e5 c8d7 e5d7": "Les blanques canvien el cavall pel teu alfil.",
+    "b|e2e4 c7c5 c2c3 g8f6 e4e5 f6d5 d2d4 c5d4 g1f3 b8c6 c3d4 d7d6 f1c4 d5b6 c4b5 d6e5 f3e5 c8d7 e5d7 d8d7": "Recuperes amb la dama. La posició és igualada, i el peó blanc de d4 està sol: és un bon objectiu per atacar.",
+    "b|e2e4 c7c5 b1c3": "Les blanques treuen el cavall. És la Siciliana Tancada: no volen obrir el centre aviat.",
+    "b|e2e4 c7c5 b1c3 b8c6": "Treus el cavall, que vigila d4.",
+    "b|e2e4 c7c5 b1c3 b8c6 f2f4": "Les blanques avancen el peó de f per atacar al flanc de rei. Es diu atac Grand Prix.",
+    "b|e2e4 c7c5 b1c3 b8c6 f2f4 g7g6": "Prepares l'alfil a g7.",
+    "b|e2e4 c7c5 b1c3 b8c6 f2f4 g7g6 g1f3": "Les blanques treuen el cavall.",
+    "b|e2e4 c7c5 b1c3 b8c6 f2f4 g7g6 g1f3 f8g7": "L'alfil va a la diagonal llarga i pressiona el centre i el flanc de dama.",
+    "b|e2e4 c7c5 b1c3 b8c6 f2f4 g7g6 g1f3 f8g7 f1c4": "L'alfil blanc apunta a f7.",
+    "b|e2e4 c7c5 b1c3 b8c6 f2f4 g7g6 g1f3 f8g7 f1c4 e7e6": "Tapes la diagonal de l'alfil de c4 cap a f7 i prepares ...d5.",
+    "b|e2e4 c7c5 b1c3 b8c6 f2f4 g7g6 g1f3 f8g7 f1c4 e7e6 e1g1": "Les blanques enroquen.",
+    "b|e2e4 c7c5 b1c3 b8c6 f2f4 g7g6 g1f3 f8g7 f1c4 e7e6 e1g1 g8e7": "El cavall va a e7 i no a f6, perquè allà el peó de f4 l'empaitaria avançant a e5. Des d'e7 ajuda a jugar ...d5.",
+    "b|e2e4 c7c5 b1c3 b8c6 f2f4 g7g6 g1f3 f8g7 f1c4 e7e6 e1g1 g8e7 d2d3": "Les blanques defensen e4.",
+    "b|e2e4 c7c5 b1c3 b8c6 f2f4 g7g6 g1f3 f8g7 f1c4 e7e6 e1g1 g8e7 d2d3 e8g8": "Enroques. Ara el pla és ...d5 per obrir el centre.",
+    "b|e2e4 c7c5 d2d4": "Les blanques ofereixen un peó. És el gambit Smith-Morra.",
+    "b|e2e4 c7c5 d2d4 c5d4": "Captures el peó.",
+    "b|e2e4 c7c5 d2d4 c5d4 c2c3": "Les blanques ofereixen un altre peó per treure les peces molt de pressa.",
+    "b|e2e4 c7c5 d2d4 c5d4 c2c3 d4c3": "L'agafes! Ara tens un peó de més. A canvi, les blanques treuran les peces ràpidament: hauràs de defensar-te bé.",
+    "b|e2e4 c7c5 d2d4 c5d4 c2c3 d4c3 b1c3": "Les blanques recuperen amb el cavall, que surt al centre.",
+    "b|e2e4 c7c5 d2d4 c5d4 c2c3 d4c3 b1c3 b8c6": "Treus el cavall i vigiles d4 i e5.",
+    "b|e2e4 c7c5 d2d4 c5d4 c2c3 d4c3 b1c3 b8c6 g1f3": "Les blanques treuen l'altre cavall.",
+    "b|e2e4 c7c5 d2d4 c5d4 c2c3 d4c3 b1c3 b8c6 g1f3 d7d6": "El peó de d6 controla e5 i vigila que el cavall blanc no hi pugui saltar.",
+    "b|e2e4 c7c5 d2d4 c5d4 c2c3 d4c3 b1c3 b8c6 g1f3 d7d6 f1c4": "L'alfil blanc apunta a f7.",
+    "b|e2e4 c7c5 d2d4 c5d4 c2c3 d4c3 b1c3 b8c6 g1f3 d7d6 f1c4 e7e6": "Tapes la diagonal de l'alfil cap a f7. Ara el teu rei està més segur.",
+    "b|e2e4 c7c5 d2d4 c5d4 c2c3 d4c3 b1c3 b8c6 g1f3 d7d6 f1c4 e7e6 e1g1": "Les blanques enroquen.",
+    "b|e2e4 c7c5 d2d4 c5d4 c2c3 d4c3 b1c3 b8c6 g1f3 d7d6 f1c4 e7e6 e1g1 g8f6": "Treus el cavall i prepares l'enroc.",
+    "b|e2e4 c7c5 d2d4 c5d4 c2c3 d4c3 b1c3 b8c6 g1f3 d7d6 f1c4 e7e6 e1g1 g8f6 d1e2": "La dama blanca surt i prepara Td1, per atacar el teu peó de d6 per la columna oberta.",
+    "b|e2e4 c7c5 d2d4 c5d4 c2c3 d4c3 b1c3 b8c6 g1f3 d7d6 f1c4 e7e6 e1g1 g8f6 d1e2 f8e7": "Treus l'alfil. Ja pots enrocar.",
+    "b|e2e4 c7c5 d2d4 c5d4 c2c3 d4c3 b1c3 b8c6 g1f3 d7d6 f1c4 e7e6 e1g1 g8f6 d1e2 f8e7 f1d1": "La torre blanca va a la columna d i ataca el peó de d6.",
+    "b|e2e4 c7c5 d2d4 c5d4 c2c3 d4c3 b1c3 b8c6 g1f3 d7d6 f1c4 e7e6 e1g1 g8f6 d1e2 f8e7 f1d1 e6e5": "Avances a e5 i guanyes espai al centre. El peó de d6 queda ben defensat per l'alfil d'e7 i la dama, i el cavall blanc ja no pot saltar a d4 ni a e5.",
+    "b|e2e4 c7c5 d2d4 c5d4 c2c3 d4c3 b1c3 b8c6 g1f3 d7d6 f1c4 e7e6 e1g1 g8f6 d1e2 f8e7 f1d1 e6e5 h2h3": "Les blanques eviten ...Ag4, que clavaria el seu cavall.",
+    "b|e2e4 c7c5 d2d4 c5d4 c2c3 d4c3 b1c3 b8c6 g1f3 d7d6 f1c4 e7e6 e1g1 g8f6 d1e2 f8e7 f1d1 e6e5 h2h3 e8g8": "Enroques! El rei està segur i tens un peó de més. Ara has de completar el desenvolupament amb ...Ae6 i ...Tc8."
   },
   "alts": {
     "": ["e2e4", "d2d4", "g1f3", "e2e3", "c2c4", "g2g3", "c2c3", "b1c3"],
@@ -3689,7 +4010,54 @@ var DATA = {
     "e2e4 e7e5 g1f3 b8c6 b1c3 g8f6 d2d4 e5d4 f3d4 f8b4 d4c6 b7c6 f1d3": ["d7d5", "e8g8"],
     "e2e4 e7e5 g1f3 b8c6 b1c3 g8f6 d2d4 e5d4 f3d4 f8b4 d4c6 b7c6 f1d3 d7d5 e4d5": ["e8g8", "c6d5", "d8e7", "b4c3"],
     "e2e4 e7e5 g1f3 b8c6 b1c3 g8f6 d2d4 e5d4 f3d4 f8b4 d4c6 b7c6 f1d3 d7d5 e4d5 c6d5 e1g1": ["e8g8", "c7c6", "b4e7", "a7a6"],
-    "e2e4 e7e5 g1f3 b8c6 b1c3 g8f6 d2d4 e5d4 f3d4 f8b4 d4c6 b7c6 f1d3 d7d5 e4d5 c6d5 e1g1 e8g8 c1g5": ["c7c6", "c8e6", "b4e7", "b4c3", "c8b7", "a8b8"]
+    "e2e4 e7e5 g1f3 b8c6 b1c3 g8f6 d2d4 e5d4 f3d4 f8b4 d4c6 b7c6 f1d3 d7d5 e4d5 c6d5 e1g1 e8g8 c1g5": ["c7c6", "c8e6", "b4e7", "b4c3", "c8b7", "a8b8"],
+    "e2e4 c7c5 g1f3": ["d7d6", "g7g6", "b8c6", "e7e6", "a7a6"],
+    "e2e4 c7c5 g1f3 b8c6 d2d4": ["c5d4"],
+    "e2e4 c7c5 g1f3 b8c6 d2d4 c5d4 f3d4": ["g8f6", "e7e6", "e7e5", "g7g6", "d8c7", "a7a6", "d7d6"],
+    "e2e4 c7c5 g1f3 b8c6 d2d4 c5d4 f3d4 g7g6 b1c3": ["f8g7", "g8f6"],
+    "e2e4 c7c5 g1f3 b8c6 d2d4 c5d4 f3d4 g7g6 b1c3 f8g7 c1e3": ["g8f6"],
+    "e2e4 c7c5 g1f3 b8c6 d2d4 c5d4 f3d4 g7g6 b1c3 f8g7 c1e3 g8f6 f1c4": ["e8g8", "c6a5", "d8a5", "d7d6"],
+    "e2e4 c7c5 g1f3 b8c6 d2d4 c5d4 f3d4 g7g6 b1c3 f8g7 c1e3 g8f6 f1c4 e8g8 c4b3": ["d7d6", "d8a5", "f6g4", "c6a5", "a7a5", "d7d5"],
+    "e2e4 c7c5 g1f3 b8c6 d2d4 c5d4 f3d4 g7g6 b1c3 f8g7 c1e3 g8f6 f1c4 e8g8 c4b3 d7d6 f2f3": ["d8a5", "c6d4"],
+    "e2e4 c7c5 g1f3 b8c6 d2d4 c5d4 f3d4 g7g6 b1c3 f8g7 c1e3 g8f6 f1c4 e8g8 c4b3 d7d6 f2f3 c8d7 d1d2": ["c6d4"],
+    "e2e4 c7c5 g1f3 b8c6 d2d4 c5d4 f3d4 g7g6 b1c3 f8g7 c1e3 g8f6 f1c4 e8g8 c4b3 d7d6 f2f3 c8d7 d1d2 c6d4 e3d4": ["b7b5"],
+    "e2e4 c7c5 g1f3 b8c6 d2d4 c5d4 f3d4 g7g6 c2c4": ["d7d6", "g8f6", "f8g7"],
+    "e2e4 c7c5 g1f3 b8c6 d2d4 c5d4 f3d4 g7g6 c2c4 g8f6 b1c3": ["c6d4", "d7d6", "f8g7", "d8a5"],
+    "e2e4 c7c5 g1f3 b8c6 d2d4 c5d4 f3d4 g7g6 c2c4 g8f6 b1c3 d7d6 f1e2": ["c6d4"],
+    "e2e4 c7c5 g1f3 b8c6 d2d4 c5d4 f3d4 g7g6 c2c4 g8f6 b1c3 d7d6 f1e2 c6d4 d1d4": ["f8g7", "c8e6", "c8d7"],
+    "e2e4 c7c5 g1f3 b8c6 d2d4 c5d4 f3d4 g7g6 c2c4 g8f6 b1c3 d7d6 f1e2 c6d4 d1d4 f8g7 c1e3": ["e8g8", "a7a5", "c8e6", "d8a5", "c8d7", "a7a6"],
+    "e2e4 c7c5 g1f3 b8c6 d2d4 c5d4 f3d4 g7g6 c2c4 g8f6 b1c3 d7d6 f1e2 c6d4 d1d4 f8g7 c1e3 e8g8 d4d2": ["a7a5", "c8e6", "f6g4", "d8a5", "f8e8", "c8d7"],
+    "e2e4 c7c5 g1f3 b8c6 f1b5": ["g7g6", "e7e6", "e7e5", "d7d6", "g8f6", "h7h6", "d8c7", "c6d4"],
+    "e2e4 c7c5 g1f3 b8c6 f1b5 g7g6 e1g1": ["f8g7", "c6d4", "a7a6"],
+    "e2e4 c7c5 g1f3 b8c6 f1b5 g7g6 e1g1 f8g7 f1e1": ["e7e5", "d7d6", "g8f6", "c6d4", "a7a6", "d8c7"],
+    "e2e4 c7c5 g1f3 b8c6 f1b5 g7g6 e1g1 f8g7 f1e1 g8f6 c2c3": ["e8g8", "d8b6", "d7d6", "a7a6"],
+    "e2e4 c7c5 g1f3 b8c6 f1b5 g7g6 e1g1 f8g7 f1e1 g8f6 c2c3 e8g8 d2d4": ["d7d5", "c5d4", "a7a6", "d8a5"],
+    "e2e4 c7c5 g1f3 b8c6 f1b5 g7g6 e1g1 f8g7 f1e1 g8f6 c2c3 e8g8 d2d4 c5d4 c3d4": ["d7d5", "a7a6"],
+    "e2e4 c7c5 g1f3 b8c6 f1b5 g7g6 e1g1 f8g7 f1e1 g8f6 c2c3 e8g8 d2d4 c5d4 c3d4 d7d5 e4e5": ["f6e4"],
+    "e2e4 c7c5 c2c3": ["d7d5", "b8c6", "g8f6", "e7e6", "a7a6", "e7e5", "g7g6", "d7d6"],
+    "e2e4 c7c5 c2c3 g8f6 e4e5": ["f6d5"],
+    "e2e4 c7c5 c2c3 g8f6 e4e5 f6d5 d2d4": ["c5d4", "d7d6", "e7e6", "b8c6"],
+    "e2e4 c7c5 c2c3 g8f6 e4e5 f6d5 d2d4 c5d4 g1f3": ["d7d6", "b8c6", "e7e6", "d8c7"],
+    "e2e4 c7c5 c2c3 g8f6 e4e5 f6d5 d2d4 c5d4 g1f3 b8c6 c3d4": ["d7d6", "e7e6", "g7g6"],
+    "e2e4 c7c5 c2c3 g8f6 e4e5 f6d5 d2d4 c5d4 g1f3 b8c6 c3d4 d7d6 f1c4": ["d5b6", "d6e5", "e7e6", "c8e6"],
+    "e2e4 c7c5 c2c3 g8f6 e4e5 f6d5 d2d4 c5d4 g1f3 b8c6 c3d4 d7d6 f1c4 d5b6 c4b5": ["d6e5", "e7e6", "c8d7", "a7a6"],
+    "e2e4 c7c5 c2c3 g8f6 e4e5 f6d5 d2d4 c5d4 g1f3 b8c6 c3d4 d7d6 f1c4 d5b6 c4b5 d6e5 f3e5": ["c8d7"],
+    "e2e4 c7c5 c2c3 g8f6 e4e5 f6d5 d2d4 c5d4 g1f3 b8c6 c3d4 d7d6 f1c4 d5b6 c4b5 d6e5 f3e5 c8d7 e5d7": ["d8d7"],
+    "e2e4 c7c5 b1c3": ["b8c6", "g7g6", "e7e6", "a7a6", "d7d6"],
+    "e2e4 c7c5 b1c3 b8c6 f2f4": ["g7g6", "e7e6", "g8h6", "d7d6", "b7b6", "c6d4", "a7a6"],
+    "e2e4 c7c5 b1c3 b8c6 f2f4 g7g6 g1f3": ["f8g7", "d7d6", "c6d4"],
+    "e2e4 c7c5 b1c3 b8c6 f2f4 g7g6 g1f3 f8g7 f1c4": ["e7e6", "a7a6", "d7d6"],
+    "e2e4 c7c5 b1c3 b8c6 f2f4 g7g6 g1f3 f8g7 f1c4 e7e6 e1g1": ["g8e7", "a7a6"],
+    "e2e4 c7c5 b1c3 b8c6 f2f4 g7g6 g1f3 f8g7 f1c4 e7e6 e1g1 g8e7 d2d3": ["d7d5", "e8g8", "b7b6", "a7a6", "d7d6", "c6d4", "h7h6"],
+    "e2e4 c7c5 d2d4": ["c5d4"],
+    "e2e4 c7c5 d2d4 c5d4 c2c3": ["d4c3", "e7e5"],
+    "e2e4 c7c5 d2d4 c5d4 c2c3 d4c3 b1c3": ["b8c6", "e7e6", "d7d6", "a7a6", "g7g6", "h7h6"],
+    "e2e4 c7c5 d2d4 c5d4 c2c3 d4c3 b1c3 b8c6 g1f3": ["e7e6", "d7d6", "a7a6", "g8f6", "g7g6", "h7h6"],
+    "e2e4 c7c5 d2d4 c5d4 c2c3 d4c3 b1c3 b8c6 g1f3 d7d6 f1c4": ["e7e6", "h7h6", "a7a6"],
+    "e2e4 c7c5 d2d4 c5d4 c2c3 d4c3 b1c3 b8c6 g1f3 d7d6 f1c4 e7e6 e1g1": ["f8e7", "g8f6", "a7a6", "h7h6"],
+    "e2e4 c7c5 d2d4 c5d4 c2c3 d4c3 b1c3 b8c6 g1f3 d7d6 f1c4 e7e6 e1g1 g8f6 d1e2": ["c8d7", "f8e7", "h7h6", "d8c7", "a7a6"],
+    "e2e4 c7c5 d2d4 c5d4 c2c3 d4c3 b1c3 b8c6 g1f3 d7d6 f1c4 e7e6 e1g1 g8f6 d1e2 f8e7 f1d1": ["c8d7", "e6e5", "d8a5", "f6g4"],
+    "e2e4 c7c5 d2d4 c5d4 c2c3 d4c3 b1c3 b8c6 g1f3 d7d6 f1c4 e7e6 e1g1 g8f6 d1e2 f8e7 f1d1 e6e5 h2h3": ["e8g8", "c8e6", "a7a6", "h7h6"]
   }
 };
 var PIECES = {
@@ -3802,33 +4170,263 @@ function renderScore() {
   document.getElementById('sPts').textContent = PTS;
   document.getElementById('sDays').textContent = STREAK.n;
 }
-function renderRack() {
-  ['w', 'b'].forEach(function (c) {
-    var el = document.getElementById(c === 'w' ? 'listW' : 'listB');
-    el.innerHTML = '';
-    DATA.opens.filter(function (o) {
-      return o.color === c;
-    }).forEach(function (o) {
-      var got = o.lines.reduce(function (a, _, i) {
-          return a + lineStars(o.id, i);
-        }, 0),
-        max = o.lines.length * 3;
-      var full = o.lines.filter(function (_, i) {
-        return lineStars(o.id, i) === 3;
-      }).length;
-      var b = document.createElement('button');
-      b.type = 'button';
-      b.className = 'op' + (full === o.lines.length ? ' done' : '');
-      b.setAttribute('aria-pressed', cur && cur.o.id === o.id ? 'true' : 'false');
-      b.innerHTML = "<span class=\"nm\">".concat(o.name, "</span><span class=\"sb\">").concat(o.sub, "</span><span class=\"st\"><span class=\"stars\">\u2605</span> ").concat(got, " de ").concat(max, " \xB7 ").concat(full, " de ").concat(o.lines.length, " ").concat(o.lines.length === 1 ? 'variant' : 'variants', " perfectes</span>");
-      b.onclick = function () {
-        start(o.id, null);
+// ---------- opening tree: choose by playing the first moves ----------
+var TK = 6; // up to move 3 the tree branches; deeper differences are variants of the same leaf
+function divAt(ls, ply) {
+  var _loop = function _loop(p) {
+      var m = ls[0].l.uci[p];
+      if (ls.some(function (x) {
+        return x.l.uci[p] !== m;
+      })) return {
+        v: p
       };
-      el.appendChild(b);
+    },
+    _ret;
+  for (var p = ply; p < 60; p++) {
+    _ret = _loop(p);
+    if (_ret) return _ret.v;
+  }
+  return 99;
+}
+function isLeaf(ls, ply) {
+  return ls.every(function (x) {
+    return x.o.id === ls[0].o.id;
+  }) && (ls.length === 1 || divAt(ls, ply) >= TK);
+}
+function grow(ls, s, e) {
+  var n = {
+    ls: ls,
+    s: s,
+    e: e,
+    kids: []
+  };
+  var groups = [],
+    keyOf = {};
+  ls.forEach(function (x) {
+    var k = x.l.uci[e];
+    if (!(k in keyOf)) {
+      keyOf[k] = groups.length;
+      groups.push([]);
+    }
+    groups[keyOf[k]].push(x);
+  });
+  groups.forEach(function (g) {
+    if (isLeaf(g, e)) n.kids.push({
+      ls: g,
+      s: e,
+      e: e + 1,
+      leaf: true
+    });else n.kids.push(grow(g, e, divAt(g, e + 1)));
+  });
+  return n;
+}
+var TREE = {};
+['w', 'b'].forEach(function (c) {
+  var ls = [];
+  DATA.opens.filter(function (o) {
+    return o.color === c;
+  }).forEach(function (o) {
+    return o.lines.forEach(function (l, i) {
+      return ls.push({
+        o: o,
+        i: i,
+        l: l
+      });
     });
   });
-  renderScore();
+  TREE[c] = grow(ls, 0, divAt(ls, 0));
+});
+var T = {
+  c: 'w',
+  path: []
+};
+function tNode() {
+  var n = TREE[T.c];
+  T.path.forEach(function (i) {
+    n = n.kids[i];
+  });
+  return n;
 }
+function edgeLabel(n) {
+  var u = n.ls[0].l.uci,
+    s = sanList(u.slice(n.s, n.e), u.slice(0, n.s));
+  return s.map(function (m, k) {
+    var p = n.s + k;
+    return p % 2 === 0 || k === 0 ? tag(p) + m : m;
+  }).join(' ');
+}
+function nodeStars(n) {
+  var got = 0,
+    full = 0;
+  n.ls.forEach(function (x) {
+    var st = lineStars(x.o.id, x.i);
+    got += st;
+    if (st === 3) full++;
+  });
+  return {
+    got: got,
+    max: n.ls.length * 3,
+    full: full,
+    all: full === n.ls.length
+  };
+}
+function namesBelow(n) {
+  var out = [];
+  n.ls.forEach(function (x) {
+    if (out.indexOf(x.l.g[0]) < 0) out.push(x.l.g[0]);
+  });
+  return out;
+}
+function leafTitle(n) {
+  var subs = [];
+  n.ls.forEach(function (x) {
+    var t = x.l.g[1] || (n.ls.length > 1 ? 'variant principal' : '');
+    if (t && subs.indexOf(t) < 0) subs.push(t);
+  });
+  return {
+    t: n.ls[0].l.g[0],
+    sub: n.ls.length > 1 ? n.ls.length + ' variants' + (subs.length ? ': ' + subs.join(' · ') : '') : subs.join('')
+  };
+}
+function tPos(n) {
+  var g = new Chess();
+  var u = n.ls[0].l.uci.slice(0, n.e);
+  u.forEach(function (m) {
+    return g.move({
+      from: m.slice(0, 2),
+      to: m.slice(2, 4),
+      promotion: 'q'
+    });
+  });
+  return {
+    g: g,
+    last: u[u.length - 1]
+  };
+}
+function tBoard(n) {
+  var p = tPos(n);
+  drawBoard(document.getElementById('tBoard'), p.g, T.c === 'b', {
+    last: p.last
+  });
+}
+function startLeaf(n) {
+  var open = n.ls.filter(function (x) {
+      return lineStars(x.o.id, x.i) < 3;
+    }),
+    pick = open[0] || n.ls[0];
+  start(pick.o.id, pick.i);
+  if (window.innerWidth < 720) {
+    var r = document.querySelector('.stage').getBoundingClientRect();
+    window.scrollBy(0, r.top - 8);
+  }
+}
+function renderRack() {
+  document.querySelectorAll('#tCol button').forEach(function (b) {
+    return b.setAttribute('aria-pressed', String(b.getAttribute('data-c') === T.c));
+  });
+  var node = tNode();
+  // breadcrumbs
+  var cr = document.getElementById('tCrumbs');
+  var n = TREE[T.c];
+  var parts = [{
+    lab: n.e > 0 ? edgeLabel(n) : 'Inici',
+    d: 0
+  }];
+  T.path.forEach(function (i, k) {
+    n = n.kids[i];
+    parts.push({
+      lab: edgeLabel(n),
+      d: k + 1
+    });
+  });
+  cr.innerHTML = parts.map(function (p, k) {
+    return (k ? '<span class="sep">›</span>' : '') + "<button type=\"button\" data-d=\"".concat(p.d, "\" aria-current=\"").concat(p.d === T.path.length, "\">").concat(p.lab, "</button>");
+  }).join('');
+  cr.querySelectorAll('button').forEach(function (b) {
+    b.onclick = function () {
+      T.path = T.path.slice(0, +b.getAttribute('data-d'));
+      renderRack();
+    };
+  });
+  tBoard(node);
+  var turn = node.e % 2 === 0 ? 'w' : 'b';
+  document.getElementById('tQ').textContent = turn === T.c ? 'Quina jugada vols fer tu?' : 'Què juga el rival?';
+  var el = document.getElementById('tKids');
+  el.innerHTML = '';
+  node.kids.forEach(function (k, idx) {
+    var st = nodeStars(k),
+      b = document.createElement('button');
+    b.type = 'button';
+    var isCur = cur && k.ls.some(function (x) {
+      return x.o.id === cur.o.id && x.i === cur.li;
+    });
+    b.className = 'op' + (k.leaf ? ' leaf' : '') + (st.all ? ' done' : '');
+    b.setAttribute('aria-pressed', String(!!(k.leaf && isCur)));
+    var stTxt = "<span class=\"st\"><span class=\"stars\">\u2605</span> ".concat(st.got, " de ").concat(st.max, " \xB7 ").concat(st.full, " de ").concat(k.ls.length, " ").concat(k.ls.length === 1 ? 'variant perfecta' : 'variants perfectes', "</span>");
+    if (k.leaf) {
+      var lt = leafTitle(k);
+      b.innerHTML = "<span class=\"mvl\">".concat(edgeLabel(k), "<i>\u25B6 Practica</i></span><span class=\"nm\">").concat(lt.t, "</span>").concat(lt.sub ? "<span class=\"sb\">".concat(lt.sub, "</span>") : '').concat(stTxt);
+      b.onclick = function () {
+        return startLeaf(k);
+      };
+    } else {
+      b.innerHTML = "<span class=\"mvl\">".concat(edgeLabel(k), "<i>\u203A</i></span><span class=\"sb\">").concat(namesBelow(k).join(', '), "</span>").concat(stTxt);
+      b.onclick = function () {
+        T.path = T.path.concat([idx]);
+        renderRack();
+      };
+    }
+    if (window.PointerEvent) {
+      b.addEventListener('pointerenter', function (e) {
+        if (e.pointerType === 'mouse') tBoard(k);
+      });
+      b.addEventListener('pointerleave', function (e) {
+        if (e.pointerType === 'mouse') tBoard(tNode());
+      });
+    }
+    b.addEventListener('focus', function () {
+      return tBoard(k);
+    });
+    b.addEventListener('blur', function () {
+      return tBoard(tNode());
+    });
+    el.appendChild(b);
+  });
+  renderScore();
+  if (typeof sizeBoard === 'function') setTimeout(sizeBoard, 0);
+}
+// move the tree to the place of the line being practised
+function treeSync(id, li) {
+  var o = byId[id];
+  var _find = function find(n, path) {
+    for (var i = 0; i < n.kids.length; i++) {
+      var k = n.kids[i];
+      if (!k.ls.some(function (x) {
+        return x.o.id === id && x.i === li;
+      })) continue;
+      if (k.leaf) return path;
+      return _find(k, path.concat([i]));
+    }
+    return null;
+  };
+  var p = _find(TREE[o.color], []);
+  if (p) T = {
+    c: o.color,
+    path: p
+  };
+}
+document.querySelectorAll('#tCol button').forEach(function (b) {
+  b.onclick = function () {
+    var c = b.getAttribute('data-c');
+    if (c !== T.c) {
+      T = {
+        c: c,
+        path: []
+      };
+      renderRack();
+    }
+  };
+});
 
 // ---------- drill ----------
 var cur = null;
@@ -3873,6 +4471,7 @@ function start(id, li) {
   plEl.innerHTML = '';
   mEl.parentNode.insertBefore(plEl, mEl.nextSibling);
   cur.mark = null;
+  treeSync(id, li);
   renderPills();
   renderRack();
   renderHelp();
@@ -4506,7 +5105,7 @@ document.querySelectorAll('[data-tab]').forEach(function (b) {
 var last = store.get('last', null);
 if (last && byId[last.id] && byId[last.id].lines[last.li]) start(last.id, last.li);else start('ita', 0);
 function sizeBoard() {
-  ['board', 'gBoard'].forEach(function (id) {
+  ['board', 'gBoard', 'tBoard'].forEach(function (id) {
     var b = document.getElementById(id);
     if (b && b.offsetWidth) b.style.height = b.offsetWidth + 'px';
   });
