@@ -169,6 +169,24 @@ footer { font-size: 12px; color: var(--muted); }
 .pcols li.on, .pcols li:hover, .pcols li:focus { background: var(--accent-soft); border-color: var(--accent); }
 .pcols li.them.on, .pcols li.them:hover, .pcols li.them:focus { background: var(--bad-soft); border-color: var(--bad); }
 .sq.key::before { content: ""; position: absolute; top: 4%; left: 4%; right: 4%; bottom: 4%; border-radius: 50%; border: 4px solid #f2a516; box-shadow: 0 0 10px rgba(242, 165, 22, .8); z-index: 1; pointer-events: none; }
+.thermo { border: 2px solid var(--line); border-radius: 14px; padding: 10px 14px; display: grid; gap: 6px; background: var(--panel); }
+.thtitle { font-size: 14px; font-weight: 700; color: var(--muted); }
+.thbar { position: relative; height: 28px; border-radius: 14px; overflow: hidden; background: var(--bad-soft); border: 1.5px solid var(--line); }
+.thfill { position: absolute; left: 0; top: 0; bottom: 0; background: var(--good); transition: width .6s ease; }
+.throw { display: flex; align-items: center; gap: 8px; }
+.throw .thbar { flex: 1; }
+.thlab { font-size: 13px; font-weight: 800; }
+.thlab.me { color: var(--good); } .thlab.them { color: var(--bad); }
+.thword { font-size: 19px; font-weight: 800; }
+.thjudge { margin-top: 6px; font-size: 15px; }
+.thpair { display: grid; gap: 4px; margin-top: 8px; }
+.thlabel { font-size: 13px; font-weight: 700; color: var(--muted); }
+.thpair .thbar { height: 20px; }
+.thtick { position: absolute; top: 0; bottom: 0; width: 2px; margin-left: -1px; background: rgba(0, 0, 0, .18); }
+.thtick.mid { background: rgba(0, 0, 0, .45); }
+.thwhy { font-size: 14px; color: var(--muted); }
+@media (prefers-reduced-motion: reduce) { .thfill { transition: none; } }
+
 </style>
 </head>
 <body>
@@ -1966,6 +1984,7 @@ if (typeof define !== 'undefined')
       </div>
       <div class="boardbox"><div class="board" id="board" role="grid" aria-label="Tauler"></div></div>
       <div class="msg" id="msg" aria-live="polite"></div>
+      <div class="thermo" id="thermo" hidden aria-live="polite"></div>
       <div class="plans" id="plans" hidden></div>
       <div class="moves" id="moves"></div>
       <div class="controls">
@@ -2012,7 +2031,7 @@ if (typeof define !== 'undefined')
     </div>
   </div>
 
-  <footer>El progrés es guarda només en aquest aparell. Versió 2026-10-15. Peces cburnett (CC BY-SA 3.0).</footer>
+  <footer>El progrés es guarda només en aquest aparell. Versió 2026-10-16. Peces cburnett (CC BY-SA 3.0). Ordinador: Stockfish 19 lite (GPLv3, stockfishchess.org).</footer>
 </div>
 
 <script>
@@ -2023,6 +2042,10 @@ if(!Element.prototype.closest)Element.prototype.closest=function(s){var e=this;w
 if(!Array.prototype.find)Array.prototype.find=function(f){for(var i=0;i<this.length;i++)if(f(this[i],i,this))return this[i];};
 if(!Object.assign)Object.assign=function(t){for(var i=1;i<arguments.length;i++){var s=arguments[i];if(s)for(var k in s)if(Object.prototype.hasOwnProperty.call(s,k))t[k]=s[k];}return t;};
 })();
+function _regenerator() { /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/babel/babel/blob/main/packages/babel-helpers/LICENSE */ var e, t, r = "function" == typeof Symbol ? Symbol : {}, n = r.iterator || "@@iterator", o = r.toStringTag || "@@toStringTag"; function i(r, n, o, i) { var c = n && n.prototype instanceof Generator ? n : Generator, u = Object.create(c.prototype); return _regeneratorDefine2(u, "_invoke", function (r, n, o) { var i, c, u, f = 0, p = o || [], y = !1, G = { p: 0, n: 0, v: e, a: d, f: d.bind(e, 4), d: function d(t, r) { return i = t, c = 0, u = e, G.n = r, a; } }; function d(r, n) { for (c = r, u = n, t = 0; !y && f && !o && t < p.length; t++) { var o, i = p[t], d = G.p, l = i[2]; r > 3 ? (o = l === n) && (u = i[(c = i[4]) ? 5 : (c = 3, 3)], i[4] = i[5] = e) : i[0] <= d && ((o = r < 2 && d < i[1]) ? (c = 0, G.v = n, G.n = i[1]) : d < l && (o = r < 3 || i[0] > n || n > l) && (i[4] = r, i[5] = n, G.n = l, c = 0)); } if (o || r > 1) return a; throw y = !0, n; } return function (o, p, l) { if (f > 1) throw TypeError("Generator is already running"); for (y && 1 === p && d(p, l), c = p, u = l; (t = c < 2 ? e : u) || !y;) { i || (c ? c < 3 ? (c > 1 && (G.n = -1), d(c, u)) : G.n = u : G.v = u); try { if (f = 2, i) { if (c || (o = "next"), t = i[o]) { if (!(t = t.call(i, u))) throw TypeError("iterator result is not an object"); if (!t.done) return t; u = t.value, c < 2 && (c = 0); } else 1 === c && (t = i.return) && t.call(i), c < 2 && (u = TypeError("The iterator does not provide a '" + o + "' method"), c = 1); i = e; } else if ((t = (y = G.n < 0) ? u : r.call(n, G)) !== a) break; } catch (t) { i = e, c = 1, u = t; } finally { f = 1; } } return { value: t, done: y }; }; }(r, o, i), !0), u; } var a = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} t = Object.getPrototypeOf; var c = [][n] ? t(t([][n]())) : (_regeneratorDefine2(t = {}, n, function () { return this; }), t), u = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(c); function f(e) { return Object.setPrototypeOf ? Object.setPrototypeOf(e, GeneratorFunctionPrototype) : (e.__proto__ = GeneratorFunctionPrototype, _regeneratorDefine2(e, o, "GeneratorFunction")), e.prototype = Object.create(u), e; } return GeneratorFunction.prototype = GeneratorFunctionPrototype, _regeneratorDefine2(u, "constructor", GeneratorFunctionPrototype), _regeneratorDefine2(GeneratorFunctionPrototype, "constructor", GeneratorFunction), GeneratorFunction.displayName = "GeneratorFunction", _regeneratorDefine2(GeneratorFunctionPrototype, o, "GeneratorFunction"), _regeneratorDefine2(u), _regeneratorDefine2(u, o, "Generator"), _regeneratorDefine2(u, n, function () { return this; }), _regeneratorDefine2(u, "toString", function () { return "[object Generator]"; }), (_regenerator = function _regenerator() { return { w: i, m: f }; })(); }
+function _regeneratorDefine2(e, r, n, t) { var i = Object.defineProperty; try { i({}, "", {}); } catch (e) { i = 0; } _regeneratorDefine2 = function _regeneratorDefine(e, r, n, t) { function o(r, n) { _regeneratorDefine2(e, r, function (e) { return this._invoke(r, n, e); }); } r ? i ? i(e, r, { value: n, enumerable: !t, configurable: !t, writable: !t }) : e[r] = n : (o("next", 0), o("throw", 1), o("return", 2)); }, _regeneratorDefine2(e, r, n, t); }
+function asyncGeneratorStep(n, t, e, r, o, a, c) { try { var i = n[a](c), u = i.value; } catch (n) { return void e(n); } i.done ? t(u) : Promise.resolve(u).then(r, o); }
+function _asyncToGenerator(n) { return function () { var t = this, e = arguments; return new Promise(function (r, o) { var a = n.apply(t, e); function _next(n) { asyncGeneratorStep(a, r, o, _next, _throw, "next", n); } function _throw(n) { asyncGeneratorStep(a, r, o, _next, _throw, "throw", n); } _next(void 0); }); }; }
 function _slicedToArray(r, e) { return _arrayWithHoles(r) || _iterableToArrayLimit(r, e) || _unsupportedIterableToArray(r, e) || _nonIterableRest(); }
 function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
 function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }
@@ -4445,6 +4468,8 @@ function pickLine(o) {
 function start(id, li) {
   var o = byId[id];
   if (li == null) li = pickLine(o);
+  thermoTok++;
+  document.getElementById('thermo').hidden = true;
   cur = {
     o: o,
     li: li,
@@ -4469,7 +4494,7 @@ function start(id, li) {
     mEl = document.getElementById('msg');
   plEl.hidden = true;
   plEl.innerHTML = '';
-  mEl.parentNode.insertBefore(plEl, mEl.nextSibling);
+  mEl.parentNode.insertBefore(plEl, document.getElementById('thermo').nextSibling);
   cur.mark = null;
   treeSync(id, li);
   renderPills();
@@ -4615,6 +4640,9 @@ function tryMove(from, to) {
       return;
     }
     cur.errors++;
+    setTimeout(function () {
+      return thermoJudge(cur.seq.slice(), uci, want);
+    }, 0);
     cur.wrong = [from, to];
     render();
     setTimeout(function () {
@@ -4656,6 +4684,7 @@ function finish() {
   renderRack();
   render();
   showPlans();
+  thermoFinal();
 }
 function showPlans() {
   var pl = cur.o.lines[cur.li].plan,
@@ -4675,7 +4704,7 @@ function showPlans() {
   // wide screens: plans next to the board (right column) so hovering never hides the board
   var side = document.querySelector('.side'),
     msgEl = document.getElementById('msg');
-  if (window.innerWidth >= 1080) side.insertBefore(el, side.firstChild);else msgEl.parentNode.insertBefore(el, msgEl.nextSibling);
+  if (window.innerWidth >= 1080) side.insertBefore(el, side.firstChild);else msgEl.parentNode.insertBefore(el, document.getElementById('thermo').nextSibling);
   var doneMsg = msgEl.innerHTML,
     doneCls = msgEl.className;
   var set = function set(li) {
@@ -5100,8 +5129,334 @@ document.querySelectorAll('[data-tab]').forEach(function (b) {
     return showTab(b.getAttribute('data-tab'));
   };
 });
+var ENGINE_URL = 'stockfish.js';
+// ---------- Stockfish (WASM, in a Web Worker) ----------
+// One search at a time. analyse(fen, opts, onInfo) cancels the previous search and calls
+// onInfo({depth, lines:[{cp, mate, pv:[uci]}], done}) with scores from WHITE's point of view.
+var ENGINE = function () {
+  var w = null,
+    state = 'off',
+    searching = false,
+    pending = null,
+    job = null,
+    readyCbs = [];
+  var listeners = [];
+  function fail() {
+    state = 'broken';
+    searching = false;
+    listeners.forEach(function (f) {
+      return f('broken');
+    });
+  }
+  function boot() {
+    if (w || state === 'broken') return;
+    try {
+      w = new Worker(ENGINE_URL);
+    } catch (e) {
+      fail();
+      return;
+    }
+    state = 'booting';
+    w.onerror = function () {
+      return fail();
+    };
+    w.onmessage = function (e) {
+      return onLine(String(e.data));
+    };
+    w.postMessage('uci');
+    setTimeout(function () {
+      if (state === 'booting') fail();
+    }, 20000);
+  }
+  function onLine(line) {
+    if (line === 'uciok') {
+      w.postMessage('setoption name Hash value 32');
+      w.postMessage('isready');
+      return;
+    }
+    if (line === 'readyok' && state === 'booting') {
+      state = 'ready';
+      listeners.forEach(function (f) {
+        return f('ready');
+      });
+      readyCbs.splice(0).forEach(function (f) {
+        return f();
+      });
+      return;
+    }
+    if (!job) {
+      if (line.indexOf('bestmove') === 0) {
+        searching = false;
+        next();
+      }
+      return;
+    }
+    if (line.indexOf('info ') === 0 && line.indexOf(' pv ') > 0 && line.indexOf(' score ') > 0) {
+      var g = function g(k) {
+        var m = line.match(new RegExp(' ' + k + ' (-?\\d+)'));
+        return m ? +m[1] : null;
+      };
+      var d = g('depth'),
+        k = g('multipv') || 1,
+        cp = g('cp'),
+        mate = g('mate');
+      var pv = line.split(' pv ')[1].trim().split(' ');
+      var sgn = job.white ? 1 : -1;
+      if (d !== job.depth) {
+        job.depth = d;
+        job.cur = [];
+      }
+      job.cur[k - 1] = {
+        cp: cp == null ? null : sgn * cp,
+        mate: mate == null ? null : sgn * mate,
+        pv: pv
+      };
+      if (k === 1 || job.cur.filter(Boolean).length >= job.multipv) {
+        var lines = job.cur.filter(Boolean);
+        if (lines.length) {
+          job.best = {
+            depth: d,
+            lines: lines
+          };
+          job.onInfo && job.onInfo({
+            depth: d,
+            lines: lines,
+            done: false
+          });
+        }
+      }
+      return;
+    }
+    if (line.indexOf('bestmove') === 0) {
+      var j = job;
+      job = null;
+      searching = false;
+      if (j && !j.cancelled && j.best) j.onInfo && j.onInfo(Object.assign({}, j.best, {
+        done: true
+      }));
+      next();
+    }
+  }
+  function next() {
+    if (searching || !pending || state !== 'ready') return;
+    job = pending;
+    pending = null;
+    searching = true;
+    w.postMessage('setoption name MultiPV value ' + job.multipv);
+    w.postMessage('position fen ' + job.fen);
+    w.postMessage(job.movetime ? 'go movetime ' + job.movetime : 'go depth ' + job.maxDepth);
+  }
+  return {
+    url: function url() {
+      return ENGINE_URL;
+    },
+    status: function status() {
+      return state;
+    },
+    on: function on(f) {
+      return listeners.push(f);
+    },
+    start: function start() {
+      return boot();
+    },
+    analyse: function analyse(fen, opts, onInfo) {
+      opts = opts || {};
+      boot();
+      if (state === 'broken') return;
+      if (job) {
+        job.cancelled = true;
+        job.onInfo = null;
+      }
+      pending = {
+        fen: fen,
+        white: fen.split(' ')[1] === 'w',
+        maxDepth: opts.depth || 18,
+        movetime: opts.movetime || 0,
+        multipv: opts.multipv || 1,
+        onInfo: onInfo,
+        depth: 0,
+        cur: [],
+        best: null
+      };
+      if (searching) w.postMessage('stop');else if (state === 'ready') next();else readyCbs.push(next);
+    },
+    // promise helper: final result of a fixed-depth search
+    evaluate: function evaluate(fen, depth) {
+      var _this = this;
+      return new Promise(function (res) {
+        _this.analyse(fen, {
+          depth: depth || 12,
+          multipv: 1
+        }, function (r) {
+          if (r.done) res(r);
+        });
+        if (state === 'broken') res(null);
+      });
+    },
+    stop: function stop() {
+      pending = null;
+      if (job) {
+        job.cancelled = true;
+        job.onInfo = null;
+      }
+      if (searching) w.postMessage('stop');
+    }
+  };
+}();
+// score helpers (white's point of view)
+var engCp = function engCp(l) {
+  return l.mate != null ? l.mate > 0 ? 10000 - l.mate : -10000 - l.mate : l.cp;
+};
+var engWin = function engWin(cp) {
+  return 1 / (1 + Math.pow(10, -cp / 400));
+};
+// logarithmic bar: the first pawn of advantage takes a lot of room, big advantages are compressed (0..100, white's share)
+var engShare = function engShare(cp) {
+  var k = 15,
+    M = 1000,
+    x = Math.min(Math.abs(cp), M);
+  return 50 + 50 * Math.sign(cp) * Math.log(1 + x / k) / Math.log(1 + M / k);
+};
 
-// ---------- boot ----------
+// ---------- the computer's thermometer (Stockfish) ----------
+var thermoEl = document.getElementById('thermo');
+var thermoTok = 0;
+function thermoWords(mcp) {
+  if (mcp >= 200) return 'Vas molt millor';
+  if (mcp >= 75) return 'Vas millor';
+  if (mcp >= 25) return 'Vas una mica millor';
+  if (mcp > -25) return 'Igualat';
+  if (mcp > -75) return 'El rival va una mica millor';
+  if (mcp > -200) return 'El rival va millor';
+  return 'El rival va molt millor';
+}
+// logarithmic scale: the first pawn of advantage takes a lot of room, big advantages are compressed
+function thermoShare(mcp) {
+  var k = 15,
+    M = 1000,
+    x = Math.min(Math.abs(mcp), M);
+  return 50 + 50 * Math.sign(mcp) * Math.log(1 + x / k) / Math.log(1 + M / k);
+}
+function thermoBar(mcp, label) {
+  var t1 = thermoShare(100),
+    t2 = thermoShare(-100);
+  return "".concat(label ? "<div class=\"thlabel\">".concat(label, "</div>") : '', "<div class=\"throw\"><span class=\"thlab me\">Tu</span><div class=\"thbar\"><div class=\"thfill\" style=\"width:").concat(thermoShare(mcp).toFixed(1), "%\"></div><i class=\"thtick mid\" style=\"left:50%\"></i><i class=\"thtick\" style=\"left:").concat(t1.toFixed(1), "%\"></i><i class=\"thtick\" style=\"left:").concat(t2.toFixed(1), "%\"></i></div><span class=\"thlab them\">Rival</span></div>");
+}
+function thermoHtml(whiteCp, myColor, title) {
+  var mcp = myColor === 'w' ? whiteCp : -whiteCp;
+  var calm = Math.abs(mcp) < 25 ? '<div class="thwhy">És normal! Si tots dos jugueu bé l\'obertura, la partida queda igualada. Guanyarà qui jugui millor després: mira els plans.</div>' : '';
+  return "<div class=\"thtitle\">".concat(title, "</div>").concat(thermoBar(mcp), "<div class=\"thword\">").concat(thermoWords(mcp), "</div>").concat(calm);
+}
+// after a finished variant: how is the final position?
+function thermoFinal() {
+  return _thermoFinal.apply(this, arguments);
+} // a move that is not the variant's: ask the computer if it is good or bad
+function _thermoFinal() {
+  _thermoFinal = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee() {
+    var me, tok, r;
+    return _regenerator().w(function (_context) {
+      while (1) switch (_context.n) {
+        case 0:
+          if (!(ENGINE.status() === 'broken')) {
+            _context.n = 1;
+            break;
+          }
+          return _context.a(2);
+        case 1:
+          me = cur, tok = ++thermoTok;
+          thermoEl.hidden = false;
+          thermoEl.innerHTML = '<div class="thtitle">El termòmetre de l\'ordinador</div><div class="thword">Pensant…</div>';
+          _context.n = 2;
+          return ENGINE.evaluate(me.game.fen(), 14);
+        case 2:
+          r = _context.v;
+          if (!(tok !== thermoTok || cur !== me)) {
+            _context.n = 3;
+            break;
+          }
+          return _context.a(2);
+        case 3:
+          if (r) {
+            _context.n = 4;
+            break;
+          }
+          thermoEl.hidden = true;
+          return _context.a(2);
+        case 4:
+          thermoEl.innerHTML = thermoHtml(engCp(r.lines[0]), me.o.color, 'El termòmetre de l\'ordinador: com queda la posició al final de la variant?');
+        case 5:
+          return _context.a(2);
+      }
+    }, _callee);
+  }));
+  return _thermoFinal.apply(this, arguments);
+}
+function thermoJudge(_x, _x2, _x3) {
+  return _thermoJudge.apply(this, arguments);
+} // ---------- boot ----------
+function _thermoJudge() {
+  _thermoJudge = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee2(seq, played, want) {
+    var me, tok, msgEl, before, mk, a, b, sg, pa, pb, txt;
+    return _regenerator().w(function (_context2) {
+      while (1) switch (_context2.n) {
+        case 0:
+          if (!(ENGINE.status() === 'broken')) {
+            _context2.n = 1;
+            break;
+          }
+          return _context2.a(2);
+        case 1:
+          me = cur, tok = ++thermoTok, msgEl = document.getElementById('msg'), before = msgEl.innerHTML;
+          mk = function mk(u) {
+            var g = new Chess();
+            seq.concat([u]).forEach(function (m) {
+              return g.move({
+                from: m.slice(0, 2),
+                to: m.slice(2, 4),
+                promotion: 'q'
+              });
+            });
+            return g.fen();
+          };
+          _context2.n = 2;
+          return ENGINE.evaluate(mk(played), 12);
+        case 2:
+          a = _context2.v;
+          if (!(tok !== thermoTok || cur !== me || !a)) {
+            _context2.n = 3;
+            break;
+          }
+          return _context2.a(2);
+        case 3:
+          _context2.n = 4;
+          return ENGINE.evaluate(mk(want), 12);
+        case 4:
+          b = _context2.v;
+          if (!(tok !== thermoTok || cur !== me || !b)) {
+            _context2.n = 5;
+            break;
+          }
+          return _context2.a(2);
+        case 5:
+          if (!(msgEl.innerHTML !== before)) {
+            _context2.n = 6;
+            break;
+          }
+          return _context2.a(2);
+        case 6:
+          sg = me.o.color === 'w' ? 1 : -1, pa = sg * engCp(a.lines[0]), pb = sg * engCp(b.lines[0]);
+          if (pa >= pb - 40 && pa >= -60) {
+            if (!me.done && me.errors > 0) me.errors--; // a good move is not an error
+            txt = '<b>L\'ordinador diu que també és una bona jugada!</b> No compta com a error, però no és la d\'aquesta variant.';
+          } else if (pa < pb - 150) txt = '<b>Compte!</b> L\'ordinador diu que amb aquesta jugada aniries pitjor.';else txt = 'L\'ordinador diu que és una mica pitjor que la jugada de la variant.';
+          msgEl.insertAdjacentHTML('beforeend', "<div class=\"thjudge\">".concat(txt, "<div class=\"thpair\">").concat(thermoBar(pb, 'Amb la jugada de la variant: ' + thermoWords(pb).toLowerCase())).concat(thermoBar(pa, 'Amb la teva jugada: ' + thermoWords(pa).toLowerCase()), "</div></div>"));
+        case 7:
+          return _context2.a(2);
+      }
+    }, _callee2);
+  }));
+  return _thermoJudge.apply(this, arguments);
+}
 var last = store.get('last', null);
 if (last && byId[last.id] && byId[last.id].lines[last.li]) start(last.id, last.li);else start('ita', 0);
 function sizeBoard() {
