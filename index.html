@@ -187,6 +187,24 @@ footer { font-size: 12px; color: var(--muted); }
 .thwhy { font-size: 14px; color: var(--muted); }
 @media (prefers-reduced-motion: reduce) { .thfill { transition: none; } }
 
+.movecard { gap: 10px; }
+.movecard h2 { font-size: 13px !important; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); }
+.mtable { display: grid; grid-template-columns: 34px 1fr 1fr; max-height: 340px; overflow-y: auto; border: 1px solid var(--line); border-radius: 10px; font-family: var(--mono); font-size: 15px; }
+.mtable .mn { padding: 5px 6px; color: var(--muted); background: var(--bg); text-align: right; }
+.mtable .mc { padding: 5px 8px; cursor: pointer; border-radius: 6px; outline: none; }
+.mtable .mc.me { font-weight: 800; }
+.mtable .mc:hover, .mtable .mc:focus { background: var(--accent-soft); }
+.mtable .mc.live { box-shadow: inset 0 0 0 2px var(--line); }
+.mtable .mc.on { background: var(--accent); color: var(--panel); }
+.mtable .empty { grid-column: 1 / -1; padding: 8px; font-family: var(--font); font-size: 14px; color: var(--muted); }
+.mnav { display: flex; gap: 6px; flex-wrap: wrap; }
+.btn.small { padding: 6px 12px; font-size: 14px; }
+.mnav #mvLive { margin-left: auto; }
+.mnote { font-size: 15px; min-height: 0; }
+.mnote:empty { display: none; }
+.mnote .mv { font-family: var(--mono); font-weight: 800; margin-right: 6px; }
+.viewing .board { box-shadow: 0 0 0 4px var(--accent); }
+
 </style>
 </head>
 <body>
@@ -1985,8 +2003,9 @@ if (typeof define !== 'undefined')
       <div class="boardbox"><div class="board" id="board" role="grid" aria-label="Tauler"></div></div>
       <div class="msg" id="msg" aria-live="polite"></div>
       <div class="thermo" id="thermo" hidden aria-live="polite"></div>
+      <div id="mvSlot"></div>
       <div class="plans" id="plans" hidden></div>
-      <div class="moves" id="moves"></div>
+      <div class="moves" id="moves" hidden></div>
       <div class="controls">
         <button type="button" class="btn" id="hintBtn">Pista</button>
         <button type="button" class="btn" id="againBtn">Torna a començar</button>
@@ -1995,6 +2014,12 @@ if (typeof define !== 'undefined')
     </main>
 
     <aside class="side">
+      <div class="card movecard" id="moveCard">
+        <h2 style="margin:0">Jugades</h2>
+        <div class="mtable" id="mtable" role="list"></div>
+        <div class="mnav"><button type="button" class="btn small" id="mvFirst" aria-label="Al principi">⏮</button><button type="button" class="btn small" id="mvPrev" aria-label="Jugada anterior">◀</button><button type="button" class="btn small" id="mvNext" aria-label="Jugada següent">▶</button><button type="button" class="btn small" id="mvLive">Tornar a la partida</button></div>
+        <div class="mnote" id="mnote"></div>
+      </div>
       <div class="card"><h2 style="margin:0">De què va aquesta obertura</h2><p id="opDesc"></p></div>
       <div class="card"><h2 style="margin:0">Per a què serveix cada jugada</h2><ul class="ideas" id="ideas"></ul></div>
     </aside>
@@ -4470,6 +4495,8 @@ function start(id, li) {
   if (li == null) li = pickLine(o);
   thermoTok++;
   document.getElementById('thermo').hidden = true;
+  viewPly = null;
+  hoverPly = null;
   cur = {
     o: o,
     li: li,
@@ -4494,7 +4521,7 @@ function start(id, li) {
     mEl = document.getElementById('msg');
   plEl.hidden = true;
   plEl.innerHTML = '';
-  mEl.parentNode.insertBefore(plEl, document.getElementById('thermo').nextSibling);
+  mEl.parentNode.insertBefore(plEl, document.getElementById('mvSlot').nextSibling);
   cur.mark = null;
   treeSync(id, li);
   renderPills();
@@ -4573,6 +4600,8 @@ function autoPlay() {
     var me = cur;
     setTimeout(function () {
       if (cur !== me || cur.done) return;
+      viewPly = null;
+      hoverPly = null;
       play(expected());
       addIdea(false);
       var n = NOTES[cur.o.color + '|' + cur.seq.join(' ')];
@@ -4704,7 +4733,7 @@ function showPlans() {
   // wide screens: plans next to the board (right column) so hovering never hides the board
   var side = document.querySelector('.side'),
     msgEl = document.getElementById('msg');
-  if (window.innerWidth >= 1080) side.insertBefore(el, side.firstChild);else msgEl.parentNode.insertBefore(el, document.getElementById('thermo').nextSibling);
+  if (window.innerWidth >= 1080) side.insertBefore(el, document.getElementById('moveCard').nextSibling);else msgEl.parentNode.insertBefore(el, document.getElementById('mvSlot').nextSibling);
   var doneMsg = msgEl.innerHTML,
     doneCls = msgEl.className;
   var set = function set(li) {
@@ -4858,12 +4887,31 @@ function drawBoard(el, game, flip, opt) {
     el.insertAdjacentHTML('beforeend', "<svg class=\"arrows\" viewBox=\"0 0 8 8\" aria-hidden=\"true\"><line x1=\"".concat(a[0], "\" y1=\"").concat(a[1], "\" x2=\"").concat(ex, "\" y2=\"").concat(ey, "\" stroke=\"#2f8f4f\" stroke-width=\".2\" stroke-linecap=\"round\" opacity=\".85\"/><polygon points=\"").concat(b[0], ",").concat(b[1], " ").concat(ex - uy * .32, ",").concat(ey + ux * .32, " ").concat(ex + uy * .32, ",").concat(ey - ux * .32, "\" fill=\"#2f8f4f\" opacity=\".9\"/></svg>"));
   }
 }
+var viewPly = null,
+  hoverPly = null; // reviewing an earlier position of the move list
+function shownPly() {
+  return hoverPly != null ? hoverPly : viewPly;
+}
 function render() {
   if (!cur) return;
+  var vp = shownPly(),
+    reviewing = vp != null && vp < cur.seq.length;
   var mine = !cur.done && myTurn();
   var want = mine ? expected() : null;
   var hint = want && cur.hintLvl >= 1 ? cur.hintLvl >= 2 ? [want.slice(0, 2), want.slice(2, 4)] : [want.slice(0, 2)] : [];
-  drawBoard(boardEl, cur.game, cur.o.color === 'b', {
+  if (reviewing) {
+    var g = new Chess();
+    cur.seq.slice(0, vp).forEach(function (m) {
+      return g.move({
+        from: m.slice(0, 2),
+        to: m.slice(2, 4),
+        promotion: 'q'
+      });
+    });
+    drawBoard(boardEl, g, cur.o.color === 'b', {
+      last: vp ? cur.seq[vp - 1] : null
+    });
+  } else drawBoard(boardEl, cur.game, cur.o.color === 'b', {
     last: cur.mark ? null : cur.last,
     sel: selected,
     legal: legal,
@@ -4872,12 +4920,119 @@ function render() {
     arrow: want && cur.help ? want : null,
     mark: cur.done ? cur.mark : null
   });
-  var s = sanList(cur.seq);
-  document.getElementById('moves').innerHTML = s.map(function (m, i) {
-    return (i % 2 === 0 ? i / 2 + 1 + '.' : '') + "<span class=\"".concat(cur.o.color === 'w' === (i % 2 === 0) ? 'me' : '', "\">").concat(m, "</span>");
-  }).join(' ');
+  document.querySelector('.stage').classList.toggle('viewing', reviewing);
+  renderMoves(reviewing ? vp : null);
   document.getElementById('hintBtn').disabled = !mine || cur.help;
 }
+var mvBuilt = null;
+function renderMoves(vp) {
+  var s = sanList(cur.seq),
+    el = document.getElementById('mtable'),
+    key = cur.o.id + '|' + cur.li + '|' + cur.seq.join(' ');
+  if (mvBuilt !== key) {
+    // rebuild only when the moves change, so hovering never replaces the element under the pointer
+    mvBuilt = key;
+    var h = '';
+    for (var i = 0; i < s.length; i += 2) {
+      var cell = function cell(j) {
+        return j < s.length ? "<span class=\"mc".concat(cur.o.color === 'w' === (j % 2 === 0) ? ' me' : '', "\" role=\"listitem\" tabindex=\"0\" data-p=\"").concat(j + 1, "\">").concat(s[j], "</span>") : '<span></span>';
+      };
+      h += "<span class=\"mn\">".concat(i / 2 + 1, ".</span>").concat(cell(i)).concat(cell(i + 1));
+    }
+    el.innerHTML = h || '<span class="empty">Encara no hi ha jugades.</span>';
+    el.querySelectorAll('.mc').forEach(function (c) {
+      var p = +c.getAttribute('data-p');
+      if (window.PointerEvent) {
+        c.addEventListener('pointerenter', function (e) {
+          if (e.pointerType === 'mouse') {
+            hoverPly = p;
+            render();
+          }
+        });
+        c.addEventListener('pointerleave', function (e) {
+          if (e.pointerType === 'mouse') {
+            hoverPly = null;
+            render();
+          }
+        });
+      }
+      c.addEventListener('click', function () {
+        hoverPly = null;
+        viewPly = p === cur.seq.length ? null : p;
+        render();
+      });
+      c.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          c.click();
+        }
+      });
+    });
+  }
+  el.querySelectorAll('.mc').forEach(function (c) {
+    var p = +c.getAttribute('data-p');
+    c.classList.toggle('live', p === s.length);
+    c.classList.toggle('on', vp === p);
+  });
+  var on = el.querySelector('.on') || el.querySelector('.live');
+  if (on && hoverPly == null && el.scrollHeight > el.clientHeight) {
+    var t = on.offsetTop;
+    if (t < el.scrollTop || t > el.scrollTop + el.clientHeight - 30) el.scrollTop = t - 60;
+  }
+  var note = vp ? NOTES[cur.o.color + '|' + cur.seq.slice(0, vp).join(' ')] : null;
+  document.getElementById('mnote').innerHTML = vp ? "<span class=\"mv\">".concat(tag(vp - 1)).concat(s[vp - 1], "</span>").concat(note || '') : '';
+  document.getElementById('mvLive').hidden = vp == null;
+}
+function goLive() {
+  viewPly = null;
+  hoverPly = null;
+  render();
+}
+function stepView(d) {
+  if (!cur) return;
+  var n = cur.seq.length;
+  var p = viewPly == null ? n : viewPly;
+  p = Math.max(0, Math.min(n, p + d));
+  viewPly = p === n ? null : p;
+  hoverPly = null;
+  render();
+}
+document.getElementById('mvFirst').onclick = function () {
+  if (cur) {
+    viewPly = cur.seq.length ? 0 : null;
+    hoverPly = null;
+    render();
+  }
+};
+document.getElementById('mvPrev').onclick = function () {
+  return stepView(-1);
+};
+document.getElementById('mvNext').onclick = function () {
+  return stepView(1);
+};
+document.getElementById('mvLive').onclick = goLive;
+document.addEventListener('keydown', function (e) {
+  if (!cur || document.getElementById('viewPlay').hidden || e.target.closest && e.target.closest('input,select,textarea')) return;
+  if (e.key === 'ArrowLeft') {
+    stepView(-1);
+    e.preventDefault();
+  }
+  if (e.key === 'ArrowRight') {
+    stepView(1);
+    e.preventDefault();
+  }
+});
+// the move card lives next to the board on wide screens and under it on narrow ones
+function placeMoveCard() {
+  var card = document.getElementById('moveCard'),
+    side = document.querySelector('.side'),
+    slot = document.getElementById('mvSlot');
+  if (window.innerWidth >= 1080) {
+    if (card.parentNode !== side) side.insertBefore(card, side.firstChild);
+  } else if (card.parentNode !== slot) slot.appendChild(card);
+}
+window.addEventListener('resize', placeMoveCard);
+placeMoveCard();
 // input: drag or tap (tap works on any iPad)
 function sqAt(x, y) {
   var el = document.elementFromPoint(x, y);
@@ -4885,6 +5040,10 @@ function sqAt(x, y) {
   return s ? s.getAttribute('data-sq') : null;
 }
 function select(sq) {
+  if (viewPly != null || hoverPly != null) {
+    goLive();
+    return;
+  }
   if (!cur || cur.done || !myTurn()) return;
   var pc = cur.game.get(sq);
   if (pc && pc.color === cur.game.turn()) {
