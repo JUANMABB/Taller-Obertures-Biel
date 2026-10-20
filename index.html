@@ -2031,7 +2031,7 @@ if (typeof define !== 'undefined')
     </div>
   </div>
 
-  <footer>El progrés es guarda només en aquest aparell. Versió 2026-10-16. Peces cburnett (CC BY-SA 3.0). Ordinador: Stockfish 19 lite (GPLv3, stockfishchess.org).</footer>
+  <footer>El progrés es guarda només en aquest aparell. Versió 2026-10-20. Peces cburnett (CC BY-SA 3.0). Ordinador: Stockfish 19 lite (GPLv3, stockfishchess.org).</footer>
 </div>
 
 <script>
@@ -4779,7 +4779,7 @@ function squares(flip) {
       file = flip ? files[7 - f] : files[f];
     out.push({
       sq: file + rank,
-      light: (files.indexOf(file) + rank) % 2 === 1,
+      light: (files.indexOf(file) + rank) % 2 === 0,
       showF: r === 7,
       showR: f === 0
     });
